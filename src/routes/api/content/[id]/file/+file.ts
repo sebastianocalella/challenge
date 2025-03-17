@@ -1,11 +1,10 @@
 import type { RequestHandler } from './$types';
-import db from '$lib/server/db';
+import {initializeDb} from '$lib/server/db';
 
 export const GET: RequestHandler = async ({ params }) => {
   try {
     const { id } = params;
-    
-    // Query the database for the file
+    const db = await initializeDb();
     const result = await db.query(
       'SELECT file_data, file_name, file_type FROM content_items WHERE id = $1',
       [id]
@@ -17,7 +16,6 @@ export const GET: RequestHandler = async ({ params }) => {
     
     const { file_data, file_name, file_type } = result.rows[0];
     
-    // Return the file as a response
     return new Response(file_data, {
       headers: {
         'Content-Type': file_type || 'application/octet-stream',

@@ -2,7 +2,6 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import {initializeDb} from '$lib/server/db';
 
-// GET endpoint to retrieve all content items
 export const GET: RequestHandler = async () => {
   try {
     const db = await initializeDb();
@@ -18,12 +17,10 @@ export const GET: RequestHandler = async () => {
   }
 };
 
-// POST endpoint to create a new content item
 export const POST: RequestHandler = async ({ request }) => {
   try {
     const formData = await request.formData();
     
-    // Extract values from form data
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
     const category = formData.get('category') as string;
@@ -32,11 +29,8 @@ export const POST: RequestHandler = async ({ request }) => {
     const role = formData.get('role') as string;
     const file = formData.get('file') as File;
     
-    // Process file if present
     let fileName = null;
-    // File handling logic here...
     
-    // Insert new content item
     const db = await initializeDb();
     const result = await db.query(
       `INSERT INTO content_items (title, description, category, language, provider, role, file_name)

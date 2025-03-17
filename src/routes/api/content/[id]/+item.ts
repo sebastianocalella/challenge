@@ -3,7 +3,6 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import {initializeDb} from '$lib/server/db';
 
-// GET endpoint to retrieve a specific content item
 export const GET: RequestHandler = async ({ params }) => {
   try {
     const { id } = params;
@@ -26,12 +25,9 @@ export const GET: RequestHandler = async ({ params }) => {
   }
 };
 
-/* // PUT endpoint to update a content item
+/* 
 export const PUT: RequestHandler = async ({ params, request }) => {
-  // Your update logic here
 };
 
-// DELETE endpoint to remove a content item
 export const DELETE: RequestHandler = async ({ params }) => {
-  // Your delete logic here
 }; */
