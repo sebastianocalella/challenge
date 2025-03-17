@@ -1,38 +1,46 @@
-# sv
+# Content Management System
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## Database Setup
 
-## Creating a project
+This project uses PostgreSQL for data storage. Follow these steps to set up the database:
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Prerequisites
+- Docker and Docker Compose
 
+### Setup Instructions
+
+1. Start the PostgreSQL database:
+   ```bash
+   npm run db:start
+   ```
+
+2. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+   (Edit .env file if needed)
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+Or use the combined command to start both database and server:
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+npm run start
 ```
 
-## Developing
+### Database Schema
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+The application uses a single table `content_items` with the following structure:
+- `id`: Primary key
+- `title`: Content title (max 200 chars)
+- `description`: Content description (max 1000 chars)
+- `category`: Content category (Leadership, Managing Complexity, etc.)
+- `language`: Content language code (en, it, es, etc.)
+- `provider`: Content provider (Skilla, LinkedIn, etc.)
+- `role`: Target role (Mentor/Coach, Mentee/Coachee)
+- `file_name`: Name of the uploaded file
+- `file_data`: Binary content of the uploaded file
+- `file_type`: MIME type of the uploaded file
+- `created_at`: Timestamp of creation
