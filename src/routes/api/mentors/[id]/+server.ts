@@ -1,9 +1,8 @@
-// Path: src/routes/api/content/[id]/+server.ts
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import {initializeDb} from '$lib/server/db';
 
-export const GET: RequestHandler = async ({ params }) => {
+/* export const GET: RequestHandler = async ({ params }) => {
   try {
     const { id } = params;
     const db = await initializeDb();
@@ -23,7 +22,7 @@ export const GET: RequestHandler = async ({ params }) => {
     console.error(`Error fetching content item ${params.id}:`, error);
     return json({ error: 'Failed to fetch content item' }, { status: 500 });
   }
-};
+}; */
 
 /* 
 export const PUT: RequestHandler = async ({ params, request }) => {

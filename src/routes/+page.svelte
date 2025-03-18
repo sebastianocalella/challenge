@@ -43,7 +43,7 @@
   }
 
   async function handleSave(event: CustomEvent<ContentItem>) {
-    /* try {
+    try {
       const newItem = event.detail;
       // Upload the item to the server
       const savedItem = await uploadContentItem(newItem);
@@ -53,25 +53,26 @@
       closeUploadDialog();
     } catch (err) {
       console.error('Error saving item:', err);
-      alert('Failed to save content item. Please try again.');
-    } */
+
+      // For debugging, create a mock saved item with file information
+    const mockSavedItem = {
+      ...event.detail,
+      id: Date.now().toString(),
+      fileName: event.detail.file ? event.detail.file.name : undefined,
+      // Create a mock base64 encoded string for debugging
+      fileData: event.detail.file ? 'data:mock/encoded;base64,TW9ja0ZpbGVDb250ZW50' : null,
+      fileType: event.detail.file ? event.detail.file.type : null
+    };
+    items = [...items, mockSavedItem];
+    }
     const newItem = event.detail;
-       items = [...items, {
-         ...newItem,
-         id: Date.now().toString()
-       }];
        closeUploadDialog();
-  }
-  
-  function formatDate(dateString?: string): string {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString();
   }
 </script>
 
 <div class="container">
   <header>
-    <h1>Mentoring data uploader</h1>
+    <h1>Mentoring data uploader</h1>RequestHandler
     <button class="add-button" on:click={openUploadDialog}>Add new</button>
   </header>
   
@@ -107,7 +108,7 @@
                 <td>{item.role}</td>
                 <td class="file-column">
                   {#if item.file && item.id}
-                    <a href={getFileDownloadUrl(item.id)} class="file-link" download>{item.fileName}</a>
+                    <span>{item.fileName}</span>
                   {/if}
                 </td>
               </tr>

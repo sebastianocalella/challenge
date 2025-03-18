@@ -141,10 +141,10 @@
       </div>
       
       <div class="form-group">
-        <label>
+        <label for="role">
           Role <span class="required">*</span>
         </label>
-        <div class="radio-group">
+        <div id="role" class="radio-group">
           {#each ROLE_OPTIONS as roleOption}
             <label class="radio-label">
               <input 

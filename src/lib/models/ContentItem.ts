@@ -9,8 +9,9 @@ export interface ContentItem {
   provider: string;
   role: string;
   file: File | null;
-  fileName?: string;
-  created_at?: string;
+  fileName?: string | null;
+  fileType?: string | null;
+  fileData?: string | null;
 }
 
 // Form validation interface

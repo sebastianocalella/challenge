@@ -53,7 +53,7 @@ export async function uploadContentItem(item: ContentItem): Promise<ContentItem>
       formData.append('file', item.file);
     }
     
-    const response = await fetch('/api/content', {
+    const response = await fetch('/api/mentors', {
       method: 'POST',
       body: formData
     });
@@ -73,7 +73,7 @@ export async function uploadContentItem(item: ContentItem): Promise<ContentItem>
       language: data.result.language,
       provider: data.result.provider,
       role: data.result.role,
-      file: null,
+      file: data.result.file,
       fileName: data.result.file_name
     };
   } catch (error) {
