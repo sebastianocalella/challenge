@@ -1,67 +1,116 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
-    
-    export let isOpen = false;
-    export let fileContent: string | null = null;
-    export let fileType: string | null = null;
-    
-    const dispatch = createEventDispatcher<{
-      close: void;
-    }>();
-    
-    function handleClose() {
-      dispatch('close');
-    }
-    
-    function handleBackdropClick(event: MouseEvent) {
-      // Only close if clicking directly on the backdrop, not on its children
-      if (event.target === event.currentTarget) {
-        handleClose();
-      }
-    }
-  </script>
+  import { createEventDispatcher, onMount } from 'svelte';
   
-  {#if isOpen}
-    <div 
-      class="dialog-backdrop" 
-      on:click={handleBackdropClick} 
-      on:keydown={(event) => event.key === 'Escape' && handleClose()} 
-      role="button" 
-      tabindex="0"
-    >
-      <div 
-        class="dialog-content" 
-        role="dialog" 
-        aria-modal="true"
-      >
-        {#if fileContent}
-          {#if fileType?.includes('pdf')}
-            <iframe 
-              src={`data:application/pdf;base64,${fileContent}`} 
-              title="PDF Viewer" 
-              class="file-viewer"
-            ></iframe>
-          {:else if fileType?.includes('image')}
-            <img 
-              src={`data:${fileType};base64,${fileContent}`} 
-              alt="Document Preview" 
-              class="file-viewer"
-            />
-          {:else if fileType?.includes('text') || fileType?.includes('application/json')}
-            <div class="text-viewer">
-              <pre>{fileContent}</pre>
-            </div>
-          {:else}
-            <div class="unsupported-format">
-              <p>Preview not available for this file type. Please download the file.</p>
-            </div>
-          {/if}
+  export let isOpen = false;
+  export let fileContent: string | null = null; 
+  export let mockedFileContent: File | null = null;
+  export let fileType: string | null = null;
+  
+  const dispatch = createEventDispatcher<{
+    close: void;
+  }>();
+  
+  // Local state to store processed file content
+  let processedContent: string | null = null;
+  let objectUrl: string | null = null;
+  
+  // Process the mocked file when component mounts or when mockedFileContent changes
+  $: if (mockedFileContent && isOpen) {
+    processFile(mockedFileContent);
+  }
+  
+  async function processFile(file: File) {
+    // Clean up any previous objectUrl
+    if (objectUrl) {
+      URL.revokeObjectURL(objectUrl);
+      objectUrl = null;
+    }
+    
+    // Use the file's type if fileType is not provided
+    const type = fileType || file.type;
+    
+    if (type.includes('pdf') || type.includes('image') || type.includes('video')) {
+      // For PDFs and images, create an object URL
+      objectUrl = URL.createObjectURL(file);
+    } else if (type.includes('text') || type.includes('application/json')) {
+      // For text files, read as text
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        processedContent = e.target?.result as string;
+      };
+      reader.readAsText(file);
+    }
+  }
+  
+  // Clean up object URL when component is unmounted
+  onMount(() => {
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  });
+  
+  function handleClose() {
+    dispatch('close');
+  }
+  
+  function handleBackdropClick(event: MouseEvent) {
+    // Only close if clicking directly on the backdrop, not on its children
+    if (event.target === event.currentTarget) {
+      handleClose();
+    }
+  }
+</script>
+
+{#if isOpen}
+  <div 
+    class="dialog-backdrop" 
+    on:click={handleBackdropClick} 
+    on:keydown={(event) => event.key === 'Escape' && handleClose()} 
+    role="button" 
+    tabindex="0"
+    aria-label="Close dialog"
+  >
+    <div class="dialog-content" role="dialog" aria-modal="true">
+      {#if mockedFileContent}
+        {#if fileType?.includes('pdf')}
+          <iframe 
+            src={objectUrl} 
+            title="PDF Viewer" 
+            class="file-viewer"
+          ></iframe>
+        {:else if fileType?.includes('image')}
+          <img 
+            src={objectUrl} 
+            alt="Document Preview" 
+            class="file-viewer"
+          />
+        {:else if fileType?.includes('video')}
+          <video 
+            src={objectUrl} 
+            controls 
+            autoplay 
+            class="file-viewer" 
+            title="Video Player">
+            <track kind="captions" src="path/to/captions.vtt" srclang="en" label="English">
+            Your browser does not support video playback.
+          </video>
+        {:else if fileType?.includes('text') || fileType?.includes('application/json')}
+          <div class="text-viewer">
+            <pre>{processedContent}</pre>
+          </div>
         {:else}
-          <div class="loading">Loading...</div>
+          <div class="unsupported-format">
+            <p>Preview not available for this file type ({mockedFileContent.type}). Please download the file.</p>
+          </div>
         {/if}
-      </div>
+      {:else}
+        <div class="loading">No file to display</div>
+      {/if}
     </div>
-  {/if}
+  </div>
+{/if}
   
   <style>
     .dialog-backdrop {

@@ -17,6 +17,7 @@
   // State for file viewer
   let showFileViewer = false;
   let fileContent: string | null = null;
+  let mockedFileContent: File|null = null;
   let fileType: string | null = null;
   let isLoading = false;
   
@@ -26,7 +27,7 @@
     isLoading = true;
     try {
       const result = await fetchFileContent(item.id);
-      fileContent = result.content;
+      //fileContent = result.content;
       fileType = result.type;
       showFileViewer = true;
     } catch (error) {
@@ -40,6 +41,43 @@
   function handleFileViewerClose() {
     showFileViewer = false;
   }
+
+  function _mockedGetFileDownloadUtl(): string {
+  // If we have the current item and it has file data, create a downloadable URL
+  if (item && item.file) {
+    // Create a Blob from the file data
+    const fileType = item.fileType || 'application/octet-stream';
+    const blob = new Blob([item.file], { type: fileType });
+    
+    // Create a temporary URL for the blob
+    return URL.createObjectURL(blob);
+  }
+  
+  // Return a dummy URL if we don't have the data
+  return '#no-file-available';
+}
+
+async function _mockedHandleShowFile() {
+  if (!item?.id) return;
+  
+  isLoading = true;
+  try {
+    // Instead of fetching from API, use local data
+    if (item.file) {
+      mockedFileContent = item.file;
+      fileType = item.fileType || null;
+      showFileViewer = true;
+    } else {
+      // If we don't have file data stored locally, show an error
+      throw new Error('No file data available locally');
+    }
+  } catch (error) {
+    console.error('Error handling file:', error);
+    alert('Failed to load file. No local file data available.');
+  } finally {
+    isLoading = false;
+  }
+}
 </script>
 
 <div class="dialog-backdrop">
@@ -98,10 +136,10 @@
             </div>
             <div class="file-name">{item.fileName}</div>
             <div class="file-actions">
-              <button type="button" class="show-button" on:click={handleShowFile} disabled={isLoading}>
+              <button type="button" class="show-button" on:click={_mockedHandleShowFile} disabled={isLoading}>
                 {isLoading ? 'Loading...' : 'Show'}
               </button>
-              <a href={getFileDownloadUrl(item.id)} class="download-button" download>Download</a>
+              <a href={_mockedGetFileDownloadUtl()} class="download-button" download>Download</a>
             </div>
           </div>
         {:else}
@@ -118,7 +156,8 @@
 
 <FileViewerDialog 
   isOpen={showFileViewer} 
-  fileContent={fileContent} 
+  fileContent={fileContent}
+  mockedFileContent={mockedFileContent}
   fileType={fileType}
   on:close={handleFileViewerClose}
 />

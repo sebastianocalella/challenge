@@ -202,40 +202,8 @@
     color: #666;
   }
 
-  .action-button {
-    background-color: #f5f5f5;
-    color: #333;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.85rem;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-  }
-
   .file-column {
     text-align: center;
-  }
-
-  .file-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #0066cc;
-    cursor: pointer;
-  }
-  
-  .loading {
-    text-align: center;
-    padding: 2rem;
-    color: #666;
-  }
-  
-  .error-message {
-    text-align: center;
-    padding: 2rem;
-    color: #e53935;
   }
 
   .title-column {
