@@ -20,43 +20,43 @@
       
       <div class="content-details">
         <div class="detail-group">
-          <label>Title</label>
-          <div class="detail-value">{item.title || '-'}</div>
+          <label for="title">Title</label>
+          <div id="title" class="detail-value">{item.title || '-'}</div>
         </div>
         
         {#if item.description}
           <div class="detail-group">
-            <label>Description</label>
-            <div class="detail-value description">{item.description}</div>
+            <label for="description">Description</label>
+            <div id="description" class="detail-value description">{item.description}</div>
           </div>
         {/if}
         
         <div class="detail-row">
           <div class="detail-group">
-            <label>Category</label>
-            <div class="detail-value">{item.category || '-'}</div>
+            <label for="category">Category</label>
+            <div id=category class="detail-value">{item.category || '-'}</div>
           </div>
           
           <div class="detail-group">
-            <label>Language</label>
-            <div class="detail-value">{item.language || '-'}</div>
+            <label for="language">Language</label>
+            <div id=language class="detail-value">{item.language || '-'}</div>
           </div>
         </div>
         
         <div class="detail-row">
           <div class="detail-group">
-            <label>Provider</label>
-            <div class="detail-value">{item.provider || '-'}</div>
+            <label for="provider">Provider</label>
+            <div id=provider class="detail-value">{item.provider || '-'}</div>
           </div>
           
           <div class="detail-group">
-            <label>Role</label>
-            <div class="detail-value">{item.role || '-'}</div>
+            <label for="role">Role</label>
+            <div id=role class="detail-value">{item.role || '-'}</div>
           </div>
         </div>
         
         <div class="file-section">
-          <label>File</label>
+          <label for="File">File</label>
           {#if item.fileName && item.id}
             <div class="file-details">
               <div class="file-icon">
