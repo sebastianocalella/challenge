@@ -30,6 +30,17 @@ Or use the combined command to start both database and server:
 npm run start
 ```
 
+!!! --- !!! WARNING !!! --- !!!
+In current release, due to enviroment problems, the whole form system is handled client side.
+The Backend system is developed but not tested. Feel free to see the code along the files in order to
+understand the concept behind the data comunication system.
+
+The main concept is that only file element GET implements its own detail API call by id as others elements
+are not that heavy to be fetch.
+
+According to previous statement all others elements data belongs to main table GET ALL API call, allowing us
+to enter in the detail dialog having all metadata necessary with only the name of the file.
+
 ### Database Schema
 
 The application uses a single table `content_items` with the following structure:
