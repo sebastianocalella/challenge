@@ -1,5 +1,3 @@
-// Path: src/lib/services/contentService.ts
-
 import type { ContentItem } from '$lib/models/ContentItem';
 
 // Interface for the API response
@@ -85,4 +83,41 @@ export async function uploadContentItem(item: ContentItem): Promise<ContentItem>
 // Get file download URL
 export function getFileDownloadUrl(id: string): string {
   return `/api/content/${id}/file`;
+}
+
+// New function to fetch file content
+export async function fetchFileContent(id: string): Promise<{content: string, type: string}> {
+  try {
+    const response = await fetch(`/api/mentors/${id}/file`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch file: ${response.statusText}`);
+    }
+    
+    const fileType = response.headers.get('content-type');
+    
+    // Get the file content as blob
+    const blob = await response.blob();
+    
+    // Convert blob to base64
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        const base64Content = reader.result as string;
+        // Remove the Data URL prefix (e.g., "data:application/pdf;base64,")
+        const base64Data = base64Content.split(',')[1];
+        resolve({
+          content: base64Data,
+          type: fileType || 'application/octet-stream'
+        });
+      };
+      
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error('Failed to fetch file content:', error);
+    throw error;
+  }
 }
