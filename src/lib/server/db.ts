@@ -32,7 +32,6 @@ export async function initializeDb (){
   // Don't log the full URL as it contains credentials
   // Instead log the components
   host: 'localhost',
-  port: env.POSTGRES_DB_PORT,
   database: env.POSTGRES_DB,
 });
 

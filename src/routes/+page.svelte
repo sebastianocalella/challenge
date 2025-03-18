@@ -14,14 +14,14 @@
   
   // Fetch content items when component mounts
   onMount(async () => {
-    /* try {
+    try {
       items = await getContentItems();
       loading = false;
     } catch (err) {
       error = 'Failed to load content items. Please try again later.';
       loading = false;
       console.error(err);
-    } */
+    }
   });
   
   function openUploadDialog() {
@@ -43,7 +43,7 @@
   }
 
   async function handleSave(event: CustomEvent<ContentItem>) {
-    /* try {
+    try {
       const newItem = event.detail;
       // Upload the item to the server
       const savedItem = await uploadContentItem(newItem);
@@ -54,12 +54,12 @@
     } catch (err) {
       console.error('Error saving item:', err);
       alert('Failed to save content item. Please try again.');
-    } */
-    const newItem = event.detail;
+    }
+    /* const newItem = event.detail;
        items = [...items, {
          ...newItem,
          id: Date.now().toString()
-       }];
+       }]; */
        closeUploadDialog();
   }
   
@@ -76,11 +76,11 @@
   </header>
   
   <main>
-    <!-- {#if loading}
+    {#if loading}
       <div class="loading">Loading content items...</div>
     {:else if error}
       <div class="error-message">{error}</div>
-    {:else} -->
+    {:else}
       <table>
         <thead>
           <tr>
@@ -115,7 +115,7 @@
           {/if}
         </tbody>
       </table>
-    <!-- {/if} -->
+    {/if}
   </main>
 </div>
 
