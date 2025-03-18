@@ -65,7 +65,7 @@
       // Prepare data for dispatch
       const itemToSave: ContentItem = {
         ...formData,
-        fileName: formData.file ? formData.file.name : 'No file'
+        //fileName: formData.file ? formData.file.name : 'No file'
       };
       
       // Dispatch save event with the new item

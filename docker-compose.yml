@@ -2,9 +2,8 @@ version: '3.8'
 services:
   db:
     image: postgres:14
-    # environment:
-    #   POSTGRES_USER: postgres
-    #   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "${POSTGRES_DB_PORT}:${POSTGRES_DB_PORT}"
     volumes:

@@ -1,47 +1,66 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import UploadDialog from '$lib/components/UploadDialog.svelte';
+  import ContentDetailsDialog from '$lib/components/ContentDetailsDialog.svelte';
   import type { ContentItem } from '$lib/models/ContentItem';
   import { getContentItems, uploadContentItem, getFileDownloadUrl } from '$lib/services/contentService';
   
-  let showDialog = false;
+  let showUploadDialog = false; // Renamed from showDialog
+  let showDetailsDialog = false; // New state for details dialog
+  let selectedItem: ContentItem | null = null; // Track which item is selected
   let items: ContentItem[] = [];
   let loading = true;
   let error = '';
   
   // Fetch content items when component mounts
   onMount(async () => {
-    try {
+    /* try {
       items = await getContentItems();
       loading = false;
     } catch (err) {
       error = 'Failed to load content items. Please try again later.';
       loading = false;
       console.error(err);
-    }
+    } */
   });
   
-  function openDialog() {
-    showDialog = true;
+  function openUploadDialog() {
+    showUploadDialog = true;
   }
 
-  function closeDialog() {
-    showDialog = false;
+  function closeUploadDialog() {
+    showUploadDialog = false;
+  }
+  
+  function openDetailsDialog(item: ContentItem) {
+    selectedItem = item;
+    showDetailsDialog = true;
+  }
+  
+  function closeDetailsDialog() {
+    showDetailsDialog = false;
+    selectedItem = null;
   }
 
   async function handleSave(event: CustomEvent<ContentItem>) {
-    try {
+    /* try {
       const newItem = event.detail;
       // Upload the item to the server
       const savedItem = await uploadContentItem(newItem);
       
       // Add the saved item to the local state
       items = [...items, savedItem];
-      closeDialog();
+      closeUploadDialog();
     } catch (err) {
       console.error('Error saving item:', err);
       alert('Failed to save content item. Please try again.');
-    }
+    } */
+    const newItem = event.detail;
+       items = [...items, {
+         ...newItem,
+         id: Date.now().toString()
+       }];
+       closeUploadDialog();
   }
   
   function formatDate(dateString?: string): string {
@@ -53,15 +72,15 @@
 <div class="container">
   <header>
     <h1>Mentoring data uploader</h1>
-    <button class="add-button" on:click={openDialog}>Add new</button>
+    <button class="add-button" on:click={openUploadDialog}>Add new</button>
   </header>
   
   <main>
-    {#if loading}
+    <!-- {#if loading}
       <div class="loading">Loading content items...</div>
     {:else if error}
       <div class="error-message">{error}</div>
-    {:else}
+    {:else} -->
       <table>
         <thead>
           <tr>
@@ -71,7 +90,6 @@
             <th>Provider</th>
             <th>Role</th>
             <th>File</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -81,22 +99,15 @@
             </tr>
           {:else}
             {#each items as item}
-              <tr>
-                <td>{item.title}</td>
+              <tr on:click={() => openDetailsDialog(item)} class="content-row">
+                <td class="title-column" title={item.title}>{item.title}</td>
                 <td>{item.category || '-'}</td>
                 <td>{item.language || '-'}</td>
                 <td>{item.provider || '-'}</td>
                 <td>{item.role}</td>
-                <td>
-                  {#if item.fileName && item.id}
+                <td class="file-column">
+                  {#if item.file && item.id}
                     <a href={getFileDownloadUrl(item.id)} class="file-link" download>{item.fileName}</a>
-                  {:else}
-                    <span>No file</span>
-                  {/if}
-                </td>
-                <td>
-                  {#if item.id}
-                    <a href={getFileDownloadUrl(item.id)} class="action-button" download>Download</a>
                   {/if}
                 </td>
               </tr>
@@ -104,14 +115,21 @@
           {/if}
         </tbody>
       </table>
-    {/if}
+    <!-- {/if} -->
   </main>
 </div>
 
-{#if showDialog}
+{#if showUploadDialog}
   <UploadDialog 
-    on:cancel={closeDialog} 
+    on:cancel={closeUploadDialog} 
     on:save={handleSave} 
+  />
+{/if}
+
+{#if showDetailsDialog && selectedItem}
+  <ContentDetailsDialog 
+    item={selectedItem}
+    on:close={closeDetailsDialog}
   />
 {/if}
 
@@ -167,6 +185,15 @@
     background-color: #f5f5f5;
     font-weight: 500;
   }
+  
+  .content-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .content-row:hover {
+    background-color: #f9f9f9;
+  }
 
   .empty-state {
     text-align: center;
@@ -186,13 +213,16 @@
     display: inline-block;
   }
 
-  .file-link {
-    color: #0066cc;
-    text-decoration: none;
+  .file-column {
+    text-align: center;
   }
 
-  .file-link:hover {
-    text-decoration: underline;
+  .file-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0066cc;
+    cursor: pointer;
   }
   
   .loading {
@@ -206,4 +236,12 @@
     padding: 2rem;
     color: #e53935;
   }
+
+  .title-column {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
 </style>
